@@ -76,6 +76,9 @@ class _RecentFilesState extends State<RecentFiles> {
                             DataColumn(
                               label: Text("Room"),
                             ),
+                            DataColumn(
+                              label: Text("Date"),
+                            ),
                           ],
                           rows: List.generate(
                             controller.searchData.length == 0 ? controller.assetsModel.length : controller.searchData.length,
@@ -129,6 +132,10 @@ DataRow recentFileDataRow(AssetsModel assetsModel) {
       )),
       DataCell(Text(
         assetsModel.room!,
+        style: TextStyle(fontSize: 16.sp),
+      )),
+      DataCell(Text(
+        assetsModel.date!,
         style: TextStyle(fontSize: 16.sp),
       )),
     ],

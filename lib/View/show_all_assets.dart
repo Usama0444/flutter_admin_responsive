@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:html' as html;
+import 'package:admin/Controllers/dashboardController.dart';
+import 'package:admin/dashboard/constants.dart';
+import 'package:admin/dashboard/screens/dashboard/components/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -26,7 +30,7 @@ class ShowAllAssets extends StatefulWidget {
 
 class _ShowAllAssetsState extends State<ShowAllAssets> {
   AddAssetsController assetss = Get.find<AddAssetsController>();
-
+  var dashbobardController = Get.put(DashboardController());
   List<AssetsModel> assets = [];
   List<List<String>> exportAndShare = [];
 
@@ -44,25 +48,42 @@ class _ShowAllAssetsState extends State<ShowAllAssets> {
       'HOLDERNAME',
       'SER NO',
       'ASS DES',
-      // assets[i].assetsImg.toString(),
       'ASSET BARCODE',
     ]);
-    for (int i = 0; i < assets.length; i++) {
-      exportAndShare.add([
-        assets[i].city.toString(),
-        assets[i].category.toString(),
-        assets[i].branch.toString(),
-        assets[i].floor.toString(),
-        assets[i].room.toString(),
-        assets[i].ref.toString(),
-        assets[i].subCategory.toString(),
-        assets[i].erpRef.toString(),
-        assets[i].holdername.toString(),
-        assets[i].serNo.toString(),
-        assets[i].assetsDes.toString(),
-        // assets[i].assetsImg.toString(),
-        assets[i].assetBarcode.toString(),
-      ]);
+    if (dashbobardController.searchData.isEmpty) {
+      for (int i = 0; i < assets.length; i++) {
+        exportAndShare.add([
+          assets[i].city.toString(),
+          assets[i].category.toString(),
+          assets[i].branch.toString(),
+          assets[i].floor.toString(),
+          assets[i].room.toString(),
+          assets[i].ref.toString(),
+          assets[i].subCategory.toString(),
+          assets[i].erpRef.toString(),
+          assets[i].holdername.toString(),
+          assets[i].serNo.toString(),
+          assets[i].assetsDes.toString(),
+          assets[i].assetBarcode.toString(),
+        ]);
+      }
+    } else {
+      for (int i = 0; i < dashbobardController.searchData.length; i++) {
+        exportAndShare.add([
+          dashbobardController.searchData[i].city.toString(),
+          dashbobardController.searchData[i].category.toString(),
+          dashbobardController.searchData[i].branch.toString(),
+          dashbobardController.searchData[i].floor.toString(),
+          dashbobardController.searchData[i].room.toString(),
+          dashbobardController.searchData[i].ref.toString(),
+          dashbobardController.searchData[i].subCategory.toString(),
+          dashbobardController.searchData[i].erpRef.toString(),
+          dashbobardController.searchData[i].holdername.toString(),
+          dashbobardController.searchData[i].serNo.toString(),
+          dashbobardController.searchData[i].assetsDes.toString(),
+          dashbobardController.searchData[i].assetBarcode.toString(),
+        ]);
+      }
     }
     //commit
   }
@@ -113,10 +134,12 @@ class _ShowAllAssetsState extends State<ShowAllAssets> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           iconTheme: IconThemeData(
             color: Colors.white,
           ),
           elevation: 0.0,
+          title: Header(isAssetPage: true),
         ),
         floatingActionButton: GestureDetector(
           onTap: () async {
@@ -165,156 +188,93 @@ class _ShowAllAssetsState extends State<ShowAllAssets> {
                     room: docs[i]['room'],
                     serNo: docs[i]['serNo'],
                     subCategory: docs[i]['subCategory'],
+                    date: docs[i]['date'],
                   ));
                   ids.add(docs[i]['id']);
                 }
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 2),
-                  ),
-                  itemCount: assets.length,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
-                      width: double.infinity,
-                      child: Card(
-                          elevation: 10,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10.w),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                assets[index].assetsImg != null
-                                    ? Expanded(
-                                        flex: 1,
-                                        child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(20.h),
-                                            child: Image.memory(
-                                              base64.decode(assets[index].assetsImg!),
-                                              fit: BoxFit.cover,
-                                              width: 80.w,
-                                              height: 120.h,
-                                            )),
-                                      )
-                                    : SizedBox(),
-                                SizedBox(
-                                  width: 30.w,
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      CustomTxt(
-                                        txt: 'Holder Name : ${assets[index].holdername}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      CustomTxt(
-                                        txt: 'Barcode : ${assets[index].assetBarcode}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      CustomTxt(
-                                        txt: 'Description : ${assets[index].assetsDes}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      CustomTxt(
-                                        txt: 'Floor : ${assets[index].floor}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      CustomTxt(
-                                        txt: 'Branch : ${assets[index].branch}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      CustomTxt(
-                                        txt: 'City : ${assets[index].city}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      CustomTxt(
-                                        txt: 'Category : ${assets[index].category}',
-                                        txt_style: TextStyle(
-                                          fontSize: 16.sp,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 20.h),
-                                    child: Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            assetss.assetBarcode.text = assets[index].assetBarcode!;
-                                            assetss.assetDes.text = assets[index].assetsDes!;
-                                            assetss.assetsImage = assets[index].assetsImg!;
-                                            assetss.floor.text = assets[index].floor!;
-                                            assetss.room.text = assets[index].room!;
-                                            assetss.subCategory.text = assets[index].subCategory!;
-                                            assetss.ref.text = assets[index].ref!;
-                                            assetss.repRef.text = assets[index].erpRef!;
-                                            assetss.holderName.text = assets[index].holdername!;
-                                            assetss.serNo.text = assets[index].serNo!;
-                                            assetss.id = ids[index];
-                                            assetss.isUpdate = true;
-                                            assetss.city = assets[index].city;
-                                            assetss.branch = assets[index].branch;
-                                            assetss.category = assets[index].category;
-                                            assetss.update();
-                                            Get.to(AddAssets());
-                                          },
-                                          child: Icon(
-                                            Icons.edit,
-                                            color: Colors.blue,
-                                            size: 40.sp,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 40.h,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            assetss.delete(ids[index]);
-                                          },
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                            size: 40.sp,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                    );
-                  },
-                );
+                return GetBuilder<DashboardController>(builder: (dashboardController) {
+                  return SizedBox(
+                    width: double.infinity,
+                    child: DataTable2(
+                      columnSpacing: defaultPadding,
+                      minWidth: 600,
+                      columns: [
+                        DataColumn(
+                          label: Text("Holder Name"),
+                        ),
+                        DataColumn(
+                          label: Text("Category"),
+                        ),
+                        DataColumn(
+                          label: Text("Branch"),
+                        ),
+                        DataColumn(
+                          label: Text("Floor"),
+                        ),
+                        DataColumn(
+                          label: Text("City"),
+                        ),
+                        DataColumn(
+                          label: Text("Barcode"),
+                        ),
+                        DataColumn(
+                          label: Text("Room"),
+                        ),
+                        DataColumn(
+                          label: Text("Date"),
+                        ),
+                      ],
+                      rows: List.generate(
+                        dashbobardController.searchData.length == 0 ? dashbobardController.assetsModel.length : dashbobardController.searchData.length,
+                        (index) => recentFileDataRow(
+                          dashbobardController.searchData.length == 0 ? dashbobardController.assetsModel[index] : dashbobardController.searchData[index],
+                        ),
+                      ),
+                    ),
+                  );
+                });
               }
             }),
       ),
+    );
+  }
+
+  DataRow recentFileDataRow(AssetsModel assetsModel) {
+    return DataRow(
+      cells: [
+        DataCell(Text(
+          assetsModel.holdername!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.category!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.branch!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.floor!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.city!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.assetBarcode!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.room!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+        DataCell(Text(
+          assetsModel.date!,
+          style: TextStyle(fontSize: 16.sp),
+        )),
+      ],
     );
   }
 }

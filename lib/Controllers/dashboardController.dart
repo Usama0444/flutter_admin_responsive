@@ -14,19 +14,22 @@ class DashboardController extends GetxController {
   int cityCount = 0;
   int categoryCount = 0;
   int branchCount = 0;
+  bool isCitySearch = false;
+  bool isCategorySearch = false;
+  bool isBranchSearch = false;
+  List<String> cityList = [];
+  List<String> catList = [];
+  List<String> branchList = [];
+
   List<AssetsModel> assetsModel = [];
   List<AssetsModel> searchData = [];
   TextEditingController searchInputTypeData = TextEditingController();
   dataCounts() async {
     try {
-      var city = await cityRef.get();
-      cityCount = city.size;
-      var category = await categoryRef.get();
-      categoryCount = category.size;
-      var branch = await branchRef.get();
-      branchCount = branch.size;
+      cityCount = (await cityRef.get()).size;
+      categoryCount = (await categoryRef.get()).size;
+      branchCount = (await branchRef.get()).size;
       update();
-      print('branch $branchCount');
       assetsRecord();
     } catch (e) {
       toast('$e');
@@ -53,7 +56,9 @@ class DashboardController extends GetxController {
           room: docs[i]['room'],
           serNo: docs[i]['serNo'],
           subCategory: docs[i]['subCategory'],
+          date: docs[i]['date'],
         ));
+
         update();
       }
     } catch (e) {
@@ -64,20 +69,57 @@ class DashboardController extends GetxController {
   Future<void> searchAssetsRecord() async {
     try {
       searchData.clear();
+      cityList.clear();
+      catList.clear();
+      branchList.clear();
       for (int i = 0; i < assetsModel.length; i++) {
         if (assetsModel[i].city?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
           searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
         } else if (assetsModel[i].floor?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
           searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
         } else if (assetsModel[i].room?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
           searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
         } else if (assetsModel[i].branch?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
           searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
         } else if (assetsModel[i].category?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
           searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
         } else if (assetsModel[i].holdername?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
           searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
+        } else if (assetsModel[i].date?.toLowerCase() == searchInputTypeData.text.toLowerCase()) {
+          searchData.add(assetsModel[i]);
+          cityList.add(assetsModel[i].city.toString());
+          branchList.add(assetsModel[i].branch.toString());
+          catList.add(assetsModel[i].category.toString());
         }
+      }
+      if (searchData.isNotEmpty) {
+        cityCount = 0;
+        categoryCount = 0;
+        branchCount = 0;
+        Set<String> city = Set.from(cityList);
+        Set<String> category = Set.from(catList);
+        Set<String> branch = Set.from(branchList);
+        cityCount = city.length;
+        categoryCount = category.length;
+        branchCount = branch.length;
       }
       update();
     } catch (e) {

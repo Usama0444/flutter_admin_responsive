@@ -12,6 +12,7 @@ class AssetsModel {
   String? assetsDes;
   String? assetsImg;
   String? assetBarcode;
+  String? date;
   AssetsModel({
     this.assetBarcode,
     this.assetsDes,
@@ -25,6 +26,7 @@ class AssetsModel {
     this.ref,
     this.room,
     this.serNo,
+    this.date,
     this.subCategory,
   });
 }

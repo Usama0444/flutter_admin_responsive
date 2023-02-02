@@ -46,7 +46,6 @@ class AddAssetsController extends GetxController {
   CollectionReference reference = FirebaseFirestore.instance.collection('assets');
   create() async {
     try {
-      print('add');
       if (await checkRecordExisting()) {
         toast('assets barcode already added');
       } else {
@@ -66,6 +65,7 @@ class AddAssetsController extends GetxController {
           'assetsImage': assetsImage,
           'assetsBarcode': assetBarcode.text,
           'id': did,
+          'date': DateTime.now().toString().split(' ')[0],
         });
         toast('Assets Added!');
         clearAllFields();
@@ -123,6 +123,7 @@ class AddAssetsController extends GetxController {
       'assetsImage': assetsImage,
       'assetsBarcode': assetBarcode.text,
       'id': id,
+      'date': DateTime.now().toString().split(' ')[0],
     });
     clearAllFields();
     toast('Assets updated');
