@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
               theme: theme,
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
-              home: MainScreen(),
+              home: Login(),
             );
           }),
     );

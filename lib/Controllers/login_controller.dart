@@ -18,11 +18,11 @@ class LoginController extends GetxController {
       var isMatch = await userCollectionRef
           .where(
             'username',
-            isEqualTo: username.text,
+            isEqualTo: 'admin',
           )
           .where(
             'password',
-            isEqualTo: password.text,
+            isEqualTo: 'admin@123',
           )
           .get();
       if (isMatch.docs.isNotEmpty) {
@@ -39,6 +39,7 @@ class LoginController extends GetxController {
         toast('User Not Found!');
       }
     } catch (e) {
+      print('Error $e');
       toast('something went wrong!');
     }
   }
